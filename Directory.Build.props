@@ -1,0 +1,25 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Add this file to the watchlist -->
+    <Watch Include="$(MSBuildThisFileFullPath)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Enable nullable reference types -->
+    <Nullable>enable</Nullable>
+
+    <!-- Generate XML documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Roslyn analyzers -->
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" />
+    <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" />
+    <PackageReference Include="AsyncFixer" Version="1.5.1" />
+  </ItemGroup>
+
+</Project>

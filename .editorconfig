@@ -11,8 +11,17 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+[*.yml]
+indent_size = 2
+
 [*.json]
 indent_size = 2
 
 [*.{csproj,fsproj,props,targets,ruleset}]
 indent_size = 2
+
+# Roslyn analyzer configuration
+[*.cs]
+dotnet_diagnostic.SA1633.severity = none # File should have header
+dotnet_diagnostic.SA1101.severity = none # Prefix local calls with this
+dotnet_diagnostic.SX1101.severity = none # Do not prefix local calls with this
