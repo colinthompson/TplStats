@@ -1,0 +1,16 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Add this file to the watchlist -->
+    <Watch Include="$(MSBuildThisFileFullPath)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Enable nullable reference types -->
+    <Nullable>enable</Nullable>
+
+    <!-- Generate XML documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>

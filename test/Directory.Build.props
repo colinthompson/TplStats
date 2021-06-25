@@ -1,0 +1,11 @@
+<Project>
+
+  <!-- Inherit from Directory.Build.props in parent directory -->
+  <Import Project="../$(MSBuildThisFile)" />
+
+  <ItemGroup>
+    <!-- Add this file to the watchlist -->
+    <Watch Include="$(MSBuildThisFileFullPath)" />
+  </ItemGroup>
+
+</Project>
