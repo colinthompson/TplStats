@@ -29,6 +29,9 @@ namespace TplStats.Web
         /// <param name="services">Container to configure.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            var connString = Configuration.GetConnectionString("TplStats");
+            services.AddTplStatsDatabase(connString);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

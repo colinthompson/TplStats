@@ -37,6 +37,62 @@
         "/consoleloggerparameters:NoSummary"
       ],
       "problemMatcher": "$msCompile"
+    },
+    // #region EF Core
+    {
+      "label": "create migration",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "ef",
+        "--project",
+        "${workspaceFolder}/src/TplStats.Infrastructure.Database",
+        "--startup-project",
+        "${workspaceFolder}/src/TplStats.Web",
+        "migrations",
+        "add",
+        "${input:migrationName}"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "remove migration",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "ef",
+        "--project",
+        "${workspaceFolder}/src/TplStats.Infrastructure.Database",
+        "--startup-project",
+        "${workspaceFolder}/src/TplStats.Web",
+        "migrations",
+        "remove",
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "update database",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "ef",
+        "--project",
+        "${workspaceFolder}/src/TplStats.Infrastructure.Database",
+        "--startup-project",
+        "${workspaceFolder}/src/TplStats.Web",
+        "database",
+        "update",
+        "${input:migrationName}"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+    // #endregion EF Core
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "type": "promptString",
+      "description": "Migration name to operate on"
     }
   ]
 }
