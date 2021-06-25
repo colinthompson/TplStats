@@ -16,3 +16,9 @@ indent_size = 2
 
 [*.{csproj,fsproj,props,targets,ruleset}]
 indent_size = 2
+
+# Roslyn analyzer configuration
+[*.cs]
+dotnet_diagnostic.SA1633.severity = none # File should have header
+dotnet_diagnostic.SA1101.severity = none # Prefix local calls with this
+dotnet_diagnostic.SX1101.severity = none # Do not prefix local calls with this
