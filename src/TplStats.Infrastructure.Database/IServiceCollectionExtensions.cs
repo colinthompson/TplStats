@@ -33,7 +33,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddDbContext<TplStatsContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.UseNodaTime();
+                });
                 options.UseSnakeCaseNamingConvention();
             });
 
