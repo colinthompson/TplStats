@@ -38,7 +38,6 @@ namespace IntegrationTests.Helpers
             Client = Factory.CreateClient();
 
             scope = Factory.Services.CreateScope();
-            Db = scope.ServiceProvider.GetRequiredService<TplStatsContext>();
             SerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web).ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
             Mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
         }
@@ -47,11 +46,6 @@ namespace IntegrationTests.Helpers
         /// Gets the web application factory.
         /// </summary>
         protected TplStatsWebAppFactory<Startup> Factory { get; }
-
-        /// <summary>
-        /// Gets the database context.
-        /// </summary>
-        protected TplStatsContext Db { get; }
 
         /// <summary>
         /// Gets the http client.
@@ -80,20 +74,19 @@ namespace IntegrationTests.Helpers
         }
 
         /// <inheritdoc/>
-        public Task InitializeAsync() => Db.Database.EnsureCreatedAsync();
+        public async Task InitializeAsync()
+        {
+            using var scope = Factory.Services.CreateScope();
+            using var db = scope.ServiceProvider.GetRequiredService<TplStatsContext>();
+            await db.Database.EnsureCreatedAsync();
+        }
 
         /// <inheritdoc/>
-        public Task DisposeAsync() => Db.Database.EnsureDeletedAsync();
-
-        /// <summary>
-        /// Seeds the database with the provided values.
-        /// </summary>
-        /// <param name="entities">The entites to add to the database.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task<int> SeedDbAsync(IEnumerable<object> entities)
+        public async Task DisposeAsync()
         {
-            Db.AddRange(entities);
-            return Db.SaveChangesAsync();
+            using var scope = Factory.Services.CreateScope();
+            using var db = scope.ServiceProvider.GetRequiredService<TplStatsContext>();
+            await db.Database.EnsureDeletedAsync();
         }
 
         /// <summary>
@@ -101,7 +94,21 @@ namespace IntegrationTests.Helpers
         /// </summary>
         /// <param name="entities">The entites to add to the database.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task<int> SeedDbAsync(params object[] entities) => SeedDbAsync(entities.AsEnumerable());
+        protected async Task SeedDbAsync(IEnumerable<object> entities)
+        {
+            using var scope = Factory.Services.CreateScope();
+            using var db = scope.ServiceProvider.GetRequiredService<TplStatsContext>();
+
+            db.AddRange(entities);
+            await db.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Seeds the database with the provided values.
+        /// </summary>
+        /// <param name="entities">The entites to add to the database.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        protected Task SeedDbAsync(params object[] entities) => SeedDbAsync(entities.AsEnumerable());
 
         private static string FormatConnectionString(string dbName)
         {
