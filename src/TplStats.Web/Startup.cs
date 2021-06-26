@@ -6,6 +6,8 @@ namespace TplStats.Web
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
+    using NodaTime;
+    using NodaTime.Serialization.SystemTextJson;
 
     /// <summary>
     /// ASP.NET Startup class.
@@ -32,7 +34,11 @@ namespace TplStats.Web
             var connString = Configuration.GetConnectionString("TplStats");
             services.AddTplStatsDatabase(connString);
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TplStats.Web", Version = "v1" });

@@ -1,9 +1,13 @@
 namespace IntegrationTests.Helpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
+    using NodaTime;
+    using NodaTime.Serialization.SystemTextJson;
     using TplStats.Infrastructure.Database;
     using TplStats.Web;
     using Xunit;
@@ -29,6 +33,7 @@ namespace IntegrationTests.Helpers
 
             scope = Factory.Services.CreateScope();
             Db = scope.ServiceProvider.GetRequiredService<TplStatsContext>();
+            SerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web).ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
         }
 
         /// <summary>
@@ -45,6 +50,11 @@ namespace IntegrationTests.Helpers
         /// Gets the http client.
         /// </summary>
         protected HttpClient Client { get; }
+
+        /// <summary>
+        /// Gets the JSON Serializer options.
+        /// </summary>
+        protected JsonSerializerOptions SerializerOptions { get; }
 
         /// <inheritdoc/>
         public override void Dispose()
@@ -63,11 +73,22 @@ namespace IntegrationTests.Helpers
         /// <inheritdoc/>
         public Task DisposeAsync() => Db.Database.EnsureDeletedAsync();
 
+        /// <summary>
+        /// Seeds the database with the provided values.
+        /// </summary>
+        /// <param name="entities">The entites to add to the database.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        protected Task<int> SeedDbAsync(IEnumerable<object> entities)
+        {
+            Db.AddRange(entities);
+            return Db.SaveChangesAsync();
+        }
+
         private static string FormatConnectionString(string dbName)
         {
             var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
             var port = int.Parse(Environment.GetEnvironmentVariable("DB_PORT") ?? "5432");
-            var user = Environment.GetEnvironmentVariable("DB_USER") ?? "tpl";
+            var user = Environment.GetEnvironmentVariable("DB_USER") ?? "tplstats";
             var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "P@ssword";
 
             return $"Host={host};Port={port};User ID={user};Password={password};Database={dbName}";
