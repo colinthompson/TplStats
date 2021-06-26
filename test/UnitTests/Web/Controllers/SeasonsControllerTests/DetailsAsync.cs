@@ -15,7 +15,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
     /// <summary>
     /// Unit tests for <see cref="SeasonsController.DetailsAsync(int, CancellationToken)"/>.
     /// </summary>
-    public class DetailsAsync : ControllerTestBase
+    public class DetailsAsync : ControllerTestBase<SeasonsController>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DetailsAsync"/> class.
@@ -24,10 +24,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
         public DetailsAsync(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
-            Controller = new(Db, Mapper);
         }
-
-        private SeasonsController Controller { get; }
 
         /// <summary>
         /// Ensures the correct <see cref="Season"/> entity is retrieved.
@@ -40,8 +37,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var seasons = Enumerable.Range(1, 10)
                 .Select(x => new Season(x, $"Season #{x}", default, default))
                 .ToList();
-            Db.AddRange(seasons);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(seasons);
             var season = seasons[5];
 
             // Act
@@ -62,8 +58,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var seasons = Enumerable.Range(1, 10)
                 .Select(x => new Season(x, $"Season #{x}", default, default))
                 .ToList();
-            Db.AddRange(seasons);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(seasons);
             const int id = 42;
 
             // Act

@@ -14,7 +14,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
     /// <summary>
     /// Unit tests for <see cref="SeasonsController.ListTeamsAsync(int, System.Threading.CancellationToken)"/>.
     /// </summary>
-    public class ListTeamsAsync : ControllerTestBase
+    public class ListTeamsAsync : ControllerTestBase<SeasonsController>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ListTeamsAsync"/> class.
@@ -23,10 +23,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
         public ListTeamsAsync(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
-            Controller = new(Db, Mapper);
         }
-
-        private SeasonsController Controller { get; }
 
         /// <summary>
         /// Ensures the ids for all <see cref="Team"/>s competing in the season are returned.
@@ -40,8 +37,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var teams = Enumerable.Range(1, 10)
                 .Select(x => season.AddTeam(x, $"#{x}"))
                 .ToList();
-            Db.Add(season);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(season);
 
             // Act
             var result = await Controller.ListTeamsAsync(season.Id, default);
@@ -61,8 +57,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var seasons = Enumerable.Range(1, 10)
                 .Select(x => new Season(x, $"Season ${x}", default, default))
                 .ToList();
-            Db.AddRange(seasons);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(seasons);
             const int id = 42;
 
             // Act

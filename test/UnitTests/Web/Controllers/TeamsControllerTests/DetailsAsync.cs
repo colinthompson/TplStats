@@ -15,7 +15,7 @@ namespace UnitTests.Web.Controllers.TeamsControllerTests
     /// <summary>
     /// Unit tests for <see cref="TeamsController.DetailsAsync(int, CancellationToken)"/>.
     /// </summary>
-    public class DetailsAsync : ControllerTestBase
+    public class DetailsAsync : ControllerTestBase<TeamsController>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DetailsAsync"/> class.
@@ -24,10 +24,7 @@ namespace UnitTests.Web.Controllers.TeamsControllerTests
         public DetailsAsync(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
-            Controller = new(Db, Mapper);
         }
-
-        private TeamsController Controller { get; }
 
         /// <summary>
         /// Ensures the correct <see cref="Team"/> entity is retrieved.
@@ -41,8 +38,7 @@ namespace UnitTests.Web.Controllers.TeamsControllerTests
             var teams = Enumerable.Range(1, 10)
                 .Select(x => season.AddTeam(x, $"Team #{x}"))
                 .ToList();
-            Db.AddRange(teams);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(season);
             var team = teams[5];
 
             // Act
@@ -64,8 +60,7 @@ namespace UnitTests.Web.Controllers.TeamsControllerTests
             var teams = Enumerable.Range(1, 10)
                 .Select(x => season.AddTeam(x, $"Team #{x}"))
                 .ToList();
-            Db.AddRange(teams);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(season);
             const int id = 42;
 
             // Act

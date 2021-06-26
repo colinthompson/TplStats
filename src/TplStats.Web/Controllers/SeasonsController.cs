@@ -63,13 +63,18 @@ namespace TplStats.Web.Controllers
         [HttpGet("{id:int}/teams")]
         public async Task<ActionResult<IEnumerable<int>>> ListTeamsAsync(int id, CancellationToken cancellationToken)
         {
-            var season = await Db.Seasons.SingleOrDefaultAsync(s => s.Id == id, cancellationToken: cancellationToken);
-
-            return season switch
+            if (await Db.Seasons.AnyAsync(s => s.Id == id, cancellationToken: cancellationToken))
             {
-                Season s => s.Teams.Select(t => t.Id).ToList(),
-                _ => NotFound(),
-            };
+                return await Db.Seasons
+                    .Where(s => s.Id == id)
+                    .SelectMany(s => s.Teams)
+                    .Select(t => t.Id)
+                    .ToListAsync(cancellationToken: cancellationToken);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }

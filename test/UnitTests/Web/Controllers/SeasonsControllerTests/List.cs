@@ -13,7 +13,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
     /// <summary>
     /// Unit tests for <see cref="SeasonsController.List"/>.
     /// </summary>
-    public class List : ControllerTestBase
+    public class List : ControllerTestBase<SeasonsController>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="List"/> class.
@@ -22,10 +22,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
         public List(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
-            Controller = new(Db, Mapper);
         }
-
-        private SeasonsController Controller { get; }
 
         /// <summary>
         /// Ensures an empty list is returned when no <see cref="Season"/> entities exist.
@@ -54,8 +51,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var seasons = Enumerable.Range(1, 10)
                 .Select(x => new Season(x, $"Season #{x}", default, default))
                 .ToList();
-            Db.AddRange(seasons);
-            await Db.SaveChangesAsync();
+            await SeedDbAsync(seasons);
 
             // Act
             var result = await Controller.List().ToListAsync();
