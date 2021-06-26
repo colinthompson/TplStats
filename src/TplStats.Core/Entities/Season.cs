@@ -1,6 +1,8 @@
 namespace TplStats.Core.Entities
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using NodaTime;
 
     /// <summary>
@@ -8,6 +10,7 @@ namespace TplStats.Core.Entities
     /// </summary>
     public class Season : IEntity
     {
+        private readonly List<Team> teams;
         private Period period;
 
         /// <summary>
@@ -28,6 +31,8 @@ namespace TplStats.Core.Entities
             Name = name;
             StartDate = startDate;
             period = endDate - startDate;
+
+            teams = new();
         }
 
         /// <summary>
@@ -60,6 +65,29 @@ namespace TplStats.Core.Entities
 
                 period = value - StartDate;
             }
+        }
+
+        /// <summary>
+        /// Gets the teams competing in the season.
+        /// </summary>
+        public IReadOnlyCollection<Team> Teams => teams.AsReadOnly();
+
+        /// <summary>
+        /// Adds a <see cref="Team"/> to the season.
+        /// </summary>
+        /// <param name="id">The team's id.</param>
+        /// <param name="name">The team's name.</param>
+        /// <returns>The team.</returns>
+        public Team AddTeam(int id, string name)
+        {
+            if (Teams.Any(t => t.Name == name))
+            {
+                throw new ArgumentException("team names must be unique within a season", nameof(name));
+            }
+
+            var team = new Team(id, name);
+            teams.Add(team);
+            return team;
         }
     }
 }

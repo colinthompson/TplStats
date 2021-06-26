@@ -16,6 +16,11 @@ namespace TplStats.Infrastructure.Database.Configurations
 
             builder.HasIndex(e => e.Name).IsUnique();
 
+            builder
+                .HasMany(e => e.Teams)
+                .WithOne()
+                .IsRequired();
+
             builder.HasCheckConstraint("end_date_not_before_start_date", "start_date <= end_date");
         }
     }
