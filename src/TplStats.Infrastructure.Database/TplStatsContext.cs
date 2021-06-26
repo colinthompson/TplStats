@@ -1,6 +1,7 @@
 namespace TplStats.Infrastructure.Database
 {
     using Microsoft.EntityFrameworkCore;
+    using TplStats.Core.Entities;
 
     /// <summary>
     /// Database context for TPL Stats.
@@ -15,6 +16,10 @@ namespace TplStats.Infrastructure.Database
             : base(options)
         {
         }
+
+#pragma warning disable CS1591, SA1600
+        public DbSet<Season> Seasons { get; private set; } = null!;
+#pragma warning restore CS1591, SA1600
 
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
