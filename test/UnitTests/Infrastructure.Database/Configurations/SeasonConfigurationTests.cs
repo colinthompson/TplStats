@@ -1,5 +1,6 @@
 namespace UnitTests.Infrastructure.Database.Configurations
 {
+    using System;
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata;
@@ -72,6 +73,30 @@ namespace UnitTests.Infrastructure.Database.Configurations
             // Assert
             Assert.NotNull(index);
             Assert.Equal(shouldBeUnique, index.IsUnique);
+        }
+
+        /// <summary>
+        /// Ensures that the entity's relationships are defined according to expectations.
+        /// </summary>
+        /// <param name="navigationName">The name of the navigation property.</param>
+        /// <param name="dependentType">The dependent entity type.</param>
+        /// <param name="shouldBeRequired">Whether or not the relationship is required.</param>
+        [Theory]
+        [InlineData(nameof(Season.Teams), typeof(Team), true)]
+        public void Relationships(string navigationName, Type dependentType, bool shouldBeRequired)
+        {
+            // Arrange
+            var principalEntityType = EntityType;
+            var dependentEntityType = Model.FindEntityType(dependentType);
+
+            // Act
+            var navigation = EntityType.FindNavigation(navigationName);
+
+            // Assert
+            Assert.NotNull(navigation);
+            Assert.Equal(principalEntityType, navigation.DeclaringEntityType);
+            Assert.Equal(dependentEntityType, navigation.ForeignKey.DeclaringEntityType);
+            Assert.Equal(shouldBeRequired, navigation.ForeignKey.IsRequired);
         }
 
         /// <summary>

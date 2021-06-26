@@ -1,4 +1,4 @@
-namespace UnitTests.Web.Controllers.SeasonsControllerTests
+namespace UnitTests.Web.Controllers.TeamsControllerTests
 {
     using System;
     using System.Linq;
@@ -13,7 +13,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
     using static TplStats.Web.ViewModels;
 
     /// <summary>
-    /// Unit tests for <see cref="SeasonsController.DetailsAsync(int, CancellationToken)"/>.
+    /// Unit tests for <see cref="TeamsController.DetailsAsync(int, CancellationToken)"/>.
     /// </summary>
     public class DetailsAsync : ControllerTestBase
     {
@@ -27,42 +27,44 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             Controller = new(Db, Mapper);
         }
 
-        private SeasonsController Controller { get; }
+        private TeamsController Controller { get; }
 
         /// <summary>
-        /// Ensures the correct <see cref="Season"/> entity is retrieved.
+        /// Ensures the correct <see cref="Team"/> entity is retrieved.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task ReturnsCorrectSeasonAsync()
+        public async Task ReturnsCorrectTeamAsync()
         {
             // Arrange
-            var seasons = Enumerable.Range(1, 10)
-                .Select(x => new Season(x, $"Season #{x}", default, default))
+            var season = new Season(1, "test", default, default);
+            var teams = Enumerable.Range(1, 10)
+                .Select(x => season.AddTeam(x, $"Team #{x}"))
                 .ToList();
-            Db.AddRange(seasons);
+            Db.AddRange(teams);
             await Db.SaveChangesAsync();
-            var season = seasons[5];
+            var team = teams[5];
 
             // Act
-            var result = await Controller.DetailsAsync(season.Id, default);
+            var result = await Controller.DetailsAsync(team.Id, default);
 
             // Assert
-            Assert.Equal(Mapper.Map<SeasonModel>(season), result.Value);
+            Assert.Equal(Mapper.Map<TeamModel>(team), result.Value);
         }
 
         /// <summary>
-        /// Ensures a <see cref="NotFoundResult"/> is returned when no <see cref="Season"/> with the specified id exists.
+        /// Ensures a <see cref="NotFoundResult"/> is returned when no <see cref="Team"/> with the specified id exists.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task ReturnsNotFoundWhenNoSuchSeasonExistsAsync()
+        public async Task ReturnsNotFoundWhenNoSuchTeamExistsAsync()
         {
             // Arrange
-            var seasons = Enumerable.Range(1, 10)
-                .Select(x => new Season(x, $"Season #{x}", default, default))
+            var season = new Season(1, "test", default, default);
+            var teams = Enumerable.Range(1, 10)
+                .Select(x => season.AddTeam(x, $"Team #{x}"))
                 .ToList();
-            Db.AddRange(seasons);
+            Db.AddRange(teams);
             await Db.SaveChangesAsync();
             const int id = 42;
 

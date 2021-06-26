@@ -1,12 +1,16 @@
 namespace TplStats.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using TplStats.Core.Entities;
     using TplStats.Infrastructure.Database;
+    using static TplStats.Web.ViewModels;
 
     /// <summary>
     /// API controller for <see cref="Season"/> entities.
@@ -19,19 +23,23 @@ namespace TplStats.Web.Controllers
         /// Initializes a new instance of the <see cref="SeasonsController"/> class.
         /// </summary>
         /// <param name="tplStatsContext">Database context.</param>
-        public SeasonsController(TplStatsContext tplStatsContext)
+        /// <param name="mapper">Mapper.</param>
+        public SeasonsController(TplStatsContext tplStatsContext, IMapper mapper)
         {
             Db = tplStatsContext;
+            Mapper = mapper;
         }
 
         private TplStatsContext Db { get; }
+
+        private IMapper Mapper { get; }
 
         /// <summary>
         /// Gets a list of all <see cref="Season"/> entities.
         /// </summary>
         /// <returns>All the <see cref="Season"/> entities.</returns>
         [HttpGet]
-        public IAsyncEnumerable<Season> List() => Db.Seasons;
+        public IAsyncEnumerable<SeasonModel> List() => Db.Seasons.ProjectTo<SeasonModel>(Mapper.ConfigurationProvider).AsAsyncEnumerable();
 
         /// <summary>
         /// Retrieves a single <see cref="Season"/> entity.
@@ -40,10 +48,28 @@ namespace TplStats.Web.Controllers
         /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
         /// <returns>The requested <see cref="Season"/>, or <c>404 NOT FOUND</c> if no such <see cref="Season"/> exists.</returns>
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Season>> DetailsAsync(int id, CancellationToken cancellationToken) => await Db.Seasons.SingleOrDefaultAsync(s => s.Id == id, cancellationToken: cancellationToken) switch
+        public async Task<ActionResult<SeasonModel>> DetailsAsync(int id, CancellationToken cancellationToken) => await Db.Seasons.SingleOrDefaultAsync(s => s.Id == id, cancellationToken: cancellationToken) switch
         {
-            Season s => s,
+            Season s => Mapper.Map<SeasonModel>(s),
             _ => NotFound(),
         };
+
+        /// <summary>
+        /// Retrieves the ids of the teams competing in the given season.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Season"/>.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
+        /// <returns>The ids of all teams competing in the season, or <c>404 NOT FOUND</c> if no such <see cref="Season"/> exists.</returns>
+        [HttpGet("{id:int}/teams")]
+        public async Task<ActionResult<IEnumerable<int>>> ListTeamsAsync(int id, CancellationToken cancellationToken)
+        {
+            var season = await Db.Seasons.SingleOrDefaultAsync(s => s.Id == id, cancellationToken: cancellationToken);
+
+            return season switch
+            {
+                Season s => s.Teams.Select(t => t.Id).ToList(),
+                _ => NotFound(),
+            };
+        }
     }
 }

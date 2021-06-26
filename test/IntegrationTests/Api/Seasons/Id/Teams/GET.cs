@@ -1,4 +1,4 @@
-namespace IntegrationTests.Api.Seasons.Id
+namespace IntegrationTests.Api.Seasons.Id.Teams
 {
     using System.Linq;
     using System.Net;
@@ -8,10 +8,9 @@ namespace IntegrationTests.Api.Seasons.Id
     using TplStats.Core.Entities;
     using Xunit;
     using Xunit.Abstractions;
-    using static TplStats.Web.ViewModels;
 
     /// <summary>
-    /// Integration tests for <c>GET</c> requests to <c>/api/seasons/{id}</c>.
+    /// Integration tests for <c>GET</c> requests to <c>/api/seasons/{id}/teams</c>.
     /// </summary>
     public class GET : IntegrationTestBase
     {
@@ -41,18 +40,18 @@ namespace IntegrationTests.Api.Seasons.Id
             const int id = 42;
 
             // Act
-            using var response = await Client.GetAsync($"{BaseURI}/{id}");
+            using var response = await Client.GetAsync($"{BaseURI}/{id}/teams");
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         /// <summary>
-        /// Ensures the response contains the requested season.
+        /// Ensures an empty list is returned when the requested season has no teams.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task ReturnsRequestedSeason()
+        public async Task EmptyListWhenNoTeamsExistAsync()
         {
             // Arrange
             var seasons = Enumerable.Range(1, 10)
@@ -62,12 +61,43 @@ namespace IntegrationTests.Api.Seasons.Id
             var season = seasons[5];
 
             // Act
-            using var response = await Client.GetAsync($"{BaseURI}/{season.Id}");
+            using var response = await Client.GetAsync($"{BaseURI}/{season.Id}/teams");
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var actual = await response.Content.ReadFromJsonAsync<SeasonModel>(SerializerOptions);
-            Assert.Equal(Mapper.Map<SeasonModel>(season), actual);
+            var actual = await response.Content.ReadFromJsonAsync<int[]>(SerializerOptions);
+            Assert.Empty(actual);
+        }
+
+        /// <summary>
+        /// Returns a list ofthe ids of all teams competing in the requested season.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task ReturnsListOfTeamIdsAsync()
+        {
+            // Arrange
+            var seasons = Enumerable.Range(1, 10)
+                    .Select(x => new Season(x, $"{x}", default, default))
+                    .ToList();
+            foreach (var s in seasons)
+            {
+                foreach (var x in Enumerable.Range(1, 10))
+                {
+                    s.AddTeam((s.Id * 100) + x, $"#{x}");
+                }
+            }
+
+            await SeedDbAsync(seasons);
+            var season = seasons[5];
+
+            // Act
+            using var response = await Client.GetAsync($"{BaseURI}/{season.Id}/teams");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var actual = await response.Content.ReadFromJsonAsync<int[]>(SerializerOptions);
+            Assert.Empty(actual);
         }
     }
 }

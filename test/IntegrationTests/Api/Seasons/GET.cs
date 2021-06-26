@@ -4,11 +4,13 @@ namespace IntegrationTests.Api.Seasons
     using System.Linq;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using AutoMapper.QueryableExtensions;
     using IntegrationTests.Helpers;
     using NodaTime;
     using TplStats.Core.Entities;
     using Xunit;
     using Xunit.Abstractions;
+    using static TplStats.Web.ViewModels;
 
     /// <summary>
     /// Integration test for <c>GET</c> requests to <c>/api/seasons</c>.
@@ -41,7 +43,7 @@ namespace IntegrationTests.Api.Seasons
 
             // Assert
             response.EnsureSuccessStatusCode();
-            Assert.Empty(await response.Content.ReadFromJsonAsync<ICollection<Season>>());
+            Assert.Empty(await response.Content.ReadFromJsonAsync<ICollection<SeasonModel>>());
         }
 
         /// <summary>
@@ -62,8 +64,8 @@ namespace IntegrationTests.Api.Seasons
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var actual = await response.Content.ReadFromJsonAsync<Season[]>(SerializerOptions);
-            Assert.Equal(seasons.Select(s => s.Id), actual?.Select(s => s.Id));
+            var actual = await response.Content.ReadFromJsonAsync<SeasonModel[]>(SerializerOptions);
+            Assert.Equal(seasons.AsQueryable().ProjectTo<SeasonModel>(Mapper.ConfigurationProvider), actual);
         }
     }
 }
