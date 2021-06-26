@@ -2,11 +2,13 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper.QueryableExtensions;
     using TplStats.Core.Entities;
     using TplStats.Web.Controllers;
     using UnitTests.Web.Controllers.Helpers;
     using Xunit;
     using Xunit.Abstractions;
+    using static TplStats.Web.ViewModels;
 
     /// <summary>
     /// Unit tests for <see cref="SeasonsController.List"/>.
@@ -20,7 +22,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
         public List(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
-            Controller = new(Db);
+            Controller = new(Db, Mapper);
         }
 
         private SeasonsController Controller { get; }
@@ -59,7 +61,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var result = await Controller.List().ToListAsync();
 
             // Assert
-            Assert.Equal(seasons, result);
+            Assert.Equal(seasons.AsQueryable().ProjectTo<SeasonModel>(Mapper.ConfigurationProvider), result);
         }
     }
 }

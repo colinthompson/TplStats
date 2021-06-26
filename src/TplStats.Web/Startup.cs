@@ -34,6 +34,7 @@ namespace TplStats.Web
             var connString = Configuration.GetConnectionString("TplStats");
             services.AddTplStatsDatabase(connString);
 
+            services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {

@@ -5,6 +5,7 @@ namespace IntegrationTests.Helpers
     using System.Net.Http;
     using System.Text.Json;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Microsoft.Extensions.DependencyInjection;
     using NodaTime;
     using NodaTime.Serialization.SystemTextJson;
@@ -34,6 +35,7 @@ namespace IntegrationTests.Helpers
             scope = Factory.Services.CreateScope();
             Db = scope.ServiceProvider.GetRequiredService<TplStatsContext>();
             SerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web).ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            Mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
         }
 
         /// <summary>
@@ -55,6 +57,11 @@ namespace IntegrationTests.Helpers
         /// Gets the JSON Serializer options.
         /// </summary>
         protected JsonSerializerOptions SerializerOptions { get; }
+
+        /// <summary>
+        /// Gets the mapper.
+        /// </summary>
+        protected IMapper Mapper { get; }
 
         /// <inheritdoc/>
         public override void Dispose()

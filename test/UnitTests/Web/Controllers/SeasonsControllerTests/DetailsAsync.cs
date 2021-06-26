@@ -10,6 +10,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
     using UnitTests.Web.Controllers.Helpers;
     using Xunit;
     using Xunit.Abstractions;
+    using static TplStats.Web.ViewModels;
 
     /// <summary>
     /// Unit tests for <see cref="SeasonsController.DetailsAsync(int, CancellationToken)"/>.
@@ -23,7 +24,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
         public DetailsAsync(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
-            Controller = new(Db);
+            Controller = new(Db, Mapper);
         }
 
         private SeasonsController Controller { get; }
@@ -47,7 +48,7 @@ namespace UnitTests.Web.Controllers.SeasonsControllerTests
             var result = await Controller.DetailsAsync(season.Id, default);
 
             // Assert
-            Assert.Equal(season, result.Value);
+            Assert.Equal(Mapper.Map<SeasonModel>(season), result.Value);
         }
 
         /// <summary>

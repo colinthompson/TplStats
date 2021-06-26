@@ -8,6 +8,7 @@ namespace IntegrationTests.Api.Seasons.Id
     using TplStats.Core.Entities;
     using Xunit;
     using Xunit.Abstractions;
+    using static TplStats.Web.ViewModels;
 
     /// <summary>
     /// Integration tests for <c>GET</c> requests to <c>/api/seasons/{id}</c>.
@@ -65,8 +66,8 @@ namespace IntegrationTests.Api.Seasons.Id
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var actual = await response.Content.ReadFromJsonAsync<Season>(SerializerOptions);
-            Assert.Equal(season.Id, actual?.Id);
+            var actual = await response.Content.ReadFromJsonAsync<SeasonModel>(SerializerOptions);
+            Assert.Equal(Mapper.Map<SeasonModel>(season), actual);
         }
     }
 }
