@@ -4,6 +4,7 @@ namespace IntegrationTests.Api.Seasons.Id.Teams
     using System.Net;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using FluentAssertions;
     using IntegrationTests.Helpers;
     using TplStats.Core.Entities;
     using Xunit;
@@ -97,7 +98,7 @@ namespace IntegrationTests.Api.Seasons.Id.Teams
             // Assert
             response.EnsureSuccessStatusCode();
             var actual = await response.Content.ReadFromJsonAsync<int[]>(SerializerOptions);
-            Assert.Empty(actual);
+            season.Teams.Select(t => t.Id).Should().BeEquivalentTo(actual);
         }
     }
 }
