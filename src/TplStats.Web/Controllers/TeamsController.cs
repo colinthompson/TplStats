@@ -12,6 +12,8 @@ namespace TplStats.Web.Controllers
     /// <summary>
     /// API controller for <see cref="Team"/> entities.
     /// </summary>
+    [ApiController]
+    [Route("/api/teams")]
     public class TeamsController : ControllerBase
     {
         /// <summary>
