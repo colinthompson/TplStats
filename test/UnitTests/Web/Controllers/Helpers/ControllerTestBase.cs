@@ -1,5 +1,6 @@
 namespace UnitTests.Web.Controllers.Helpers
 {
+    using System.Threading.Tasks;
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;

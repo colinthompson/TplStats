@@ -15,6 +15,7 @@ namespace TplStats.Web
         public TplStatsMapperProfile()
         {
             CreateMap<Season, SeasonModel>();
+            CreateMap<Team, TeamModel>();
         }
     }
 }

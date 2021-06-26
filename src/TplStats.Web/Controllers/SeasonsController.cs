@@ -1,6 +1,7 @@
 namespace TplStats.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -52,5 +53,23 @@ namespace TplStats.Web.Controllers
             Season s => Mapper.Map<SeasonModel>(s),
             _ => NotFound(),
         };
+
+        /// <summary>
+        /// Retrieves the ids of the teams competing in the given season.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Season"/>.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
+        /// <returns>The ids of all teams competing in the season, or <c>404 NOT FOUND</c> if no such <see cref="Season"/> exists.</returns>
+        [HttpGet("{id:int}/teams")]
+        public async Task<ActionResult<IEnumerable<int>>> ListTeamsAsync(int id, CancellationToken cancellationToken)
+        {
+            var season = await Db.Seasons.SingleOrDefaultAsync(s => s.Id == id, cancellationToken: cancellationToken);
+
+            return season switch
+            {
+                Season s => s.Teams.Select(t => t.Id).ToList(),
+                _ => NotFound(),
+            };
+        }
     }
 }

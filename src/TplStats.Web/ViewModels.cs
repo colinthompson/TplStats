@@ -15,5 +15,12 @@ namespace TplStats.Web
         /// <param name="StartDate">The season's start date.</param>
         /// <param name="EndDate">The season's end date.</param>
         public record SeasonModel(int Id, string Name, LocalDate StartDate, LocalDate EndDate);
+
+        /// <summary>
+        /// View model for <see cref="TplStats.Core.Entities.Team"/>.
+        /// </summary>
+        /// <param name="Id">The team's id.</param>
+        /// <param name="Name">The team's name.</param>
+        public record TeamModel(int Id, string Name);
     }
 }
