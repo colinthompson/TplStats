@@ -10,18 +10,18 @@ namespace TplStats.Web.Controllers
     using static TplStats.Web.ViewModels;
 
     /// <summary>
-    /// API controller for <see cref="Team"/> entities.
+    /// HTTP API controller for <see cref="Game"/> entities.
     /// </summary>
     [ApiController]
-    [Route("/api/teams")]
-    public class TeamsController : ControllerBase
+    [Route("/api/games")]
+    public class GamesController : ControllerBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TeamsController"/> class.
+        /// Initializes a new instance of the <see cref="GamesController"/> class.
         /// </summary>
         /// <param name="tplStatsContext">Database context.</param>
         /// <param name="mapper">Mapper.</param>
-        public TeamsController(TplStatsContext tplStatsContext, IMapper mapper)
+        public GamesController(TplStatsContext tplStatsContext, IMapper mapper)
         {
             Db = tplStatsContext;
             Mapper = mapper;
@@ -32,15 +32,18 @@ namespace TplStats.Web.Controllers
         private IMapper Mapper { get; }
 
         /// <summary>
-        /// Retrieves a single <see cref="Team"/> entity.
+        /// Retrieves a single <see cref="Game"/> entity.
         /// </summary>
-        /// <param name="id">The id of the <see cref="Team"/> to retrieve.</param>
+        /// <param name="id">The id of the <see cref="Game"/> to retrieve.</param>
         /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
-        /// <returns>The requested <see cref="Team"/>, or <c>404 NOT FOUND</c> if no such <see cref="Team"/> exists.</returns>
+        /// <returns>The requested <see cref="Game"/>, or <c>404 NOT FOUND</c> if no such <see cref="Game"/> exists.</returns>
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TeamModel>> DetailsAsync(int id, CancellationToken cancellationToken) => await Db.Teams.SingleOrDefaultAsync(t => t.Id == id, cancellationToken: cancellationToken) switch
+        public async Task<ActionResult<GameModel>> DetailsAsync(int id, CancellationToken cancellationToken) => await Db.Games
+            .Include(g => g.HomeTeam)
+            .Include(g => g.AwayTeam)
+            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken: cancellationToken) switch
         {
-            Team t => Mapper.Map<TeamModel>(t),
+            Game g => Mapper.Map<GameModel>(g),
             _ => NotFound(),
         };
     }

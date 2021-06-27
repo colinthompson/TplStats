@@ -83,6 +83,7 @@ namespace UnitTests.Infrastructure.Database.Configurations
         /// <param name="shouldBeRequired">Whether or not the relationship is required.</param>
         [Theory]
         [InlineData(nameof(Season.Teams), typeof(Team), true)]
+        [InlineData(nameof(Season.Games), typeof(Game), true)]
         public void Relationships(string navigationName, Type dependentType, bool shouldBeRequired)
         {
             // Arrange

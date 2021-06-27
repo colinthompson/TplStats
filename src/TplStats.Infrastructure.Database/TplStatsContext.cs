@@ -21,6 +21,8 @@ namespace TplStats.Infrastructure.Database
         public DbSet<Season> Seasons { get; private set; } = null!;
 
         public DbSet<Team> Teams { get; private set; } = null!;
+
+        public DbSet<Game> Games { get; private set; } = null!;
 #pragma warning restore CS1591, SA1600
 
         /// <inheritdoc/>

@@ -22,5 +22,16 @@ namespace TplStats.Web
         /// <param name="Id">The team's id.</param>
         /// <param name="Name">The team's name.</param>
         public record TeamModel(int Id, string Name);
+
+        /// <summary>
+        /// View model for <see cref="TplStats.Core.Entities.Game"/>.
+        /// </summary>
+        /// <param name="Id">The game's id.</param>
+        /// <param name="Field">The field on which the game is played.</param>
+        /// <param name="StartTime">The time the game starts.</param>
+        /// <param name="EndTime">The time the game ends.</param>
+        /// <param name="HomeTeamId">The home team's id.</param>
+        /// <param name="AwayTeamId">The away team's id.</param>
+        public record GameModel(int Id, string Field, LocalDateTime StartTime, LocalDateTime EndTime, int HomeTeamId, int AwayTeamId);
     }
 }

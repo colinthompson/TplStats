@@ -71,7 +71,7 @@ namespace IntegrationTests.Api.Seasons.Id.Teams
         }
 
         /// <summary>
-        /// Returns a list ofthe ids of all teams competing in the requested season.
+        /// Returns a list of the ids of all teams competing in the requested season.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
