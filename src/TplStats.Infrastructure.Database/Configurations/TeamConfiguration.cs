@@ -15,6 +15,14 @@ namespace TplStats.Infrastructure.Database.Configurations
             builder.Property(e => e.Id).ValueGeneratedNever();
 
             builder.HasIndex("SeasonId", nameof(Team.Name)).IsUnique();
+
+            builder
+                .HasMany(e => e.HomeGames)
+                .WithOne(e => e.HomeTeam);
+            builder
+                .HasMany(e => e.AwayGames)
+                .WithOne(e => e.AwayTeam);
+            builder.Ignore(e => e.Games);
         }
     }
 }

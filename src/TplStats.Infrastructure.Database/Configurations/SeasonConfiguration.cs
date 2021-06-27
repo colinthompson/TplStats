@@ -20,6 +20,10 @@ namespace TplStats.Infrastructure.Database.Configurations
                 .HasMany(e => e.Teams)
                 .WithOne()
                 .IsRequired();
+            builder
+                .HasMany(e => e.Games)
+                .WithOne()
+                .IsRequired();
 
             builder.HasCheckConstraint("end_date_not_before_start_date", "start_date <= end_date");
         }

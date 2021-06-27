@@ -1,6 +1,8 @@
 namespace UnitTests.Infrastructure.Database.Configurations
 {
+    using System;
     using System.Linq;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata;
     using TplStats.Core.Entities;
     using UnitTests.Infrastructure.Database.Configurations.Helpers;
@@ -69,6 +71,48 @@ namespace UnitTests.Infrastructure.Database.Configurations
             // Assert
             Assert.NotNull(index);
             Assert.Equal(shouldBeUnique, index.IsUnique);
+        }
+
+        /// <summary>
+        /// Ensures that the entity's relationships are defined according to expectations.
+        /// </summary>
+        /// <param name="navigationName">The name of the navigation property.</param>
+        /// <param name="dependentType">The dependent entity type.</param>
+        /// <param name="shouldBeRequired">Whether or not the relationship is required.</param>
+        [Theory]
+        [InlineData(nameof(Team.HomeGames), typeof(Game), true)]
+        [InlineData(nameof(Team.AwayGames), typeof(Game), true)]
+        public void Relationships(string navigationName, Type dependentType, bool shouldBeRequired)
+        {
+            // Arrange
+            var principalEntityType = EntityType;
+            var dependentEntityType = Model.FindEntityType(dependentType);
+
+            // Act
+            var navigation = EntityType.FindNavigation(navigationName);
+
+            // Assert
+            Assert.NotNull(navigation);
+            Assert.Equal(principalEntityType, navigation.DeclaringEntityType);
+            Assert.Equal(dependentEntityType, navigation.ForeignKey.DeclaringEntityType);
+            Assert.Equal(shouldBeRequired, navigation.ForeignKey.IsRequired);
+        }
+
+        /// <summary>
+        /// Verifies that the given properties - which might look like navigation properties - are not configured as navigation properties.
+        /// </summary>
+        /// <param name="propertyName">The property name.</param>
+        [Theory]
+        [InlineData(nameof(Team.Games))]
+        public void IgnoredRelationships(string propertyName)
+        {
+            // Arrange
+
+            // Act
+            var navigation = EntityType.FindNavigation(propertyName);
+
+            // Assert
+            Assert.Null(navigation);
         }
     }
 }
