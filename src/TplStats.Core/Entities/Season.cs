@@ -115,13 +115,13 @@ namespace TplStats.Core.Entities
 
             if (startTime.Date < StartDate || endTime.Date > EndDate)
             {
-                throw new ScheduleConflictException(game, Enumerable.Empty<Game>());
+                throw new ScheduleConflictException(game, "game must occur during the season");
             }
 
             var conflicts = Games.Where(g => game.ConflictsWith(g));
             if (conflicts.Any())
             {
-                throw new ScheduleConflictException(game, conflicts);
+                throw new ScheduleConflictException(game, "game conflicts with previously scheduled games", conflicts);
             }
 
             games.Add(game);

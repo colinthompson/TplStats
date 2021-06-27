@@ -2,6 +2,7 @@ namespace TplStats.Core.Exceptions
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using TplStats.Core.Entities;
 
     /// <summary>
@@ -13,11 +14,24 @@ namespace TplStats.Core.Exceptions
         /// Initializes a new instance of the <see cref="ScheduleConflictException"/> class.
         /// </summary>
         /// <param name="game">The game that is being scheduled.</param>
+        /// <param name="message">The exception message.</param>
         /// <param name="conflicts">The games that <paramref name="game"/> conflicts with.</param>
-        public ScheduleConflictException(Game game, IEnumerable<Game> conflicts)
+        public ScheduleConflictException(Game game, string message, IEnumerable<Game> conflicts)
+            : base(message)
         {
             Game = game;
             Conflicts = conflicts;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScheduleConflictException"/> class.
+        /// </summary>
+        /// <param name="game">The game that is being scheduled.</param>
+        /// <param name="message">The exception message.</param>
+        /// <param name="conflicts">The games that <paramref name="game"/> conflicts with.</param>
+        public ScheduleConflictException(Game game, string message, params Game[] conflicts)
+            : this(game, message, conflicts.AsEnumerable())
+        {
         }
 
         /// <summary>
