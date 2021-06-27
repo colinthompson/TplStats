@@ -76,5 +76,28 @@ namespace TplStats.Web.Controllers
                 return NotFound();
             }
         }
+
+        /// <summary>
+        /// Retrieves a list of the games scheduled as part of the given season.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Season"/>.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
+        /// <returns>A list of games scheduled to be played as part of the season, or <c>404 NOT FOUND</c> if no such <see cref="Season"/> exists.</returns>
+        [HttpGet("{id:int}/games")]
+        public async Task<ActionResult<IEnumerable<GameModel>>> ListGamesAsync(int id, CancellationToken cancellationToken)
+        {
+            if (await Db.Seasons.AnyAsync(s => s.Id == id, cancellationToken: cancellationToken))
+            {
+                return await Db.Seasons
+                    .Where(s => s.Id == id)
+                    .SelectMany(s => s.Games)
+                    .ProjectTo<GameModel>(Mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken: cancellationToken);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
     }
 }

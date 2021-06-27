@@ -16,6 +16,7 @@ namespace TplStats.Web
         {
             CreateMap<Season, SeasonModel>();
             CreateMap<Team, TeamModel>();
+            CreateMap<Game, GameModel>();
         }
     }
 }
