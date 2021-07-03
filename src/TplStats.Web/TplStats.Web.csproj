@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TplStats.Core\TplStats.Core.csproj" />
     <ProjectReference Include="..\TplStats.Infrastructure.Database\TplStats.Infrastructure.Database.csproj" />
+    <ProjectReference Include="..\TplStats.Integrations.Zuluru\TplStats.Integrations.Zuluru.csproj" />
   </ItemGroup>
 
   <ItemGroup>

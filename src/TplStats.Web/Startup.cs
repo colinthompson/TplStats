@@ -9,6 +9,7 @@ namespace TplStats.Web
     using NodaTime;
     using NodaTime.Serialization.SystemTextJson;
     using TplStats.Infrastructure.Database;
+    using TplStats.Integrations.Zuluru;
 
     /// <summary>
     /// ASP.NET Startup class.
@@ -33,7 +34,9 @@ namespace TplStats.Web
         public void ConfigureServices(IServiceCollection services)
         {
             var connString = Configuration.GetConnectionString("TplStats");
-            services.AddTplStatsDatabase(connString);
+            services
+                .AddTplStatsDatabase(connString)
+                .AddZuluruIntegration(Configuration.GetSection("Zuluru"));
 
             services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddControllers()
