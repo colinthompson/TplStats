@@ -2,6 +2,7 @@ namespace UnitTests.Infrastructure.Database
 {
     using System;
     using Microsoft.Extensions.DependencyInjection;
+    using TplStats.Infrastructure.Database;
     using Xunit;
 
     /// <summary>

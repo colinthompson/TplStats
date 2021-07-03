@@ -8,6 +8,7 @@ namespace TplStats.Web
     using Microsoft.OpenApi.Models;
     using NodaTime;
     using NodaTime.Serialization.SystemTextJson;
+    using TplStats.Infrastructure.Database;
 
     /// <summary>
     /// ASP.NET Startup class.

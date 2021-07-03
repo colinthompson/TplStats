@@ -1,8 +1,8 @@
-namespace Microsoft.Extensions.DependencyInjection
+namespace TplStats.Infrastructure.Database
 {
     using System;
     using Microsoft.EntityFrameworkCore;
-    using TplStats.Infrastructure.Database;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// Extension methods for <see cref="IServiceCollection"/>.
