@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="appsettings.Testing.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\TplStats.Core\TplStats.Core.csproj" />
     <ProjectReference Include="..\..\src\TplStats.Infrastructure.Database\TplStats.Infrastructure.Database.csproj" />
     <ProjectReference Include="..\..\src\TplStats.Integrations.Zuluru\TplStats.Integrations.Zuluru.csproj" />
